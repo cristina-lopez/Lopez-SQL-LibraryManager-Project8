@@ -1,0 +1,3 @@
+Project 8 for FSJS Techdegree
+
+In this project I...
