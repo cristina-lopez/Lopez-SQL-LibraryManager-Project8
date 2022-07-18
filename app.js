@@ -5,13 +5,26 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const routes = require('./routes/index');
-const users = require('./routes/users');
+//const users = require('./routes/users');
+const { sequelize } = require('./models');
 
 const app = express();
+
+app.use('/static', express.static('public'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+(async () => {
+  await sequelize.sync();
+  try {
+    await sequelize.authenticate();
+    console.log('Connection to the database successful!');
+  } catch (error) {
+    console.log('Error connecting to the database');
+  }
+})();
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -20,7 +33,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
+//app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
