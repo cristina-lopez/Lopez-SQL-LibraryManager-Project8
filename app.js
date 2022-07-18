@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
+const app = express();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -7,8 +8,6 @@ const logger = require('morgan');
 const routes = require('./routes/index');
 //const users = require('./routes/users');
 const { sequelize } = require('./models');
-
-const app = express();
 
 app.use('/static', express.static('public'));
 
@@ -36,8 +35,10 @@ app.use('/', routes);
 //app.use('/users', users);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use((req, res, next) => {
+  err = new Error('Page not found');
+  err.status = 404;
+  res.render('page-not-found', {err});
 });
 
 // error handler
