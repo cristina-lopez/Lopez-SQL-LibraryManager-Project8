@@ -34,22 +34,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 //app.use('/users', users);
 
-// catch 404 and forward to error handler
+// catch 404
 app.use((req, res, next) => {
   err = new Error('Page not found');
   err.status = 404;
   res.render('page-not-found', {err});
+
+  //res.status(404).render('page-not-found');
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use((err, req, res, next) => {
+  err.status = 500;
+  err.message = 'Server Error';
+  console.log(err.status, err.message);
+  res.render('error', {err});
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+
+  /* if (err.status === 404) {
+    res.status(404).render('page-not-found', {err});
+  } else {
+    err.message = err.message || 'Server Error.';
+    res.status(err.status || 500).render('error', {err});
+  } */
 });
 
 module.exports = app;
