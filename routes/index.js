@@ -13,34 +13,46 @@ function asyncHandler(cb){
   }
 }
 
-/* GET home page. Redirects to /books */
+/* GET home page. Redirects to /books :) */
 router.get('/', asyncHandler(async (req, res) => {
-  const books = await Book.findAll();
-  res.render('index', { books, title: "Books" });
+  res.redirect('/books');
 }));
 
-/* GETs full list of books. */
+/* GETs full list of books. :) */
 router.get('/books', asyncHandler(async (req, res) => {
   const books = await Book.findAll();
   res.render('index', { books });
 }));
 
-/* GETs create new book page. */
-router.get('/books/new', asyncHandler(async (req, res) => {
-  const books = await Book.findAll();
-  res.render('index', { books });
-}));
+/* GETs create new book page. :) */
+router.get('/books/new',  (req, res) => {
+  res.render('new-book', { book: {}, title: "New Book" });
+});
 
-/* POSTs new book. */
+/* POSTs new book. :) */
 router.post('/books/new', asyncHandler(async (req, res) => {
-  const books = await Book.findAll();
-  res.render('index', { books });
+  let book;
+  try {
+    book = await Book.create(req.body);
+    res.redirect("/books");
+  } catch (error) {
+    if (error.name === "SequelizeValidationError") {
+      book = await Book.build(req.body);
+      res.render("new-book", {book, errors: error.errors, title: "New Book"});
+    } else {
+      throw error;
+    }
+  }
 }));
 
 /* GETs book detail. */
 router.get('/books/:id', asyncHandler(async (req, res) => {
-  const books = await Book.findAll();
-  res.render('index', { books });
+  const book = await Book.findByPk(req.params.id);
+  if(book) {
+    res.render('book-detail', {book, title: "Details"});
+  } else {
+    res.sendStatus(404);
+  }
 }));
 
 /* POST updates book info. */

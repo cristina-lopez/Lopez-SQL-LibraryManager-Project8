@@ -38,7 +38,7 @@ app.use('/', routes);
 app.use((req, res, next) => {
   err = new Error('Page not found');
   err.status = 404;
-  res.render('page-not-found', {err});
+  res.render('page-not-found', {err, title: "Page Not Found"});
 
   //res.status(404).render('page-not-found');
 });
@@ -48,8 +48,7 @@ app.use((err, req, res, next) => {
   err.status = 500;
   err.message = 'Server Error';
   console.log(err.status, err.message);
-  res.render('error', {err});
-
+  res.render('error', {err, title: "Page Not Found"});
 
   /* if (err.status === 404) {
     res.status(404).render('page-not-found', {err});
