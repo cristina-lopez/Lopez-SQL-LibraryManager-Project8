@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Book = require('../models').Book;
 
+// async function to be used in all routers
 function asyncHandler(cb){
   return async(req, res, next) => {
     try {
@@ -18,23 +19,22 @@ router.get('/', asyncHandler(async (req, res) => {
   res.redirect('/books');
 }));
 
-/* GETs full list of books. :) */
+/* GETs full list of books :) */
 router.get('/books', asyncHandler(async (req, res) => {
   const books = await Book.findAll();
-  res.render('index', { books });
+  res.render('index', { books , title: "Books"});
 }));
 
-/* GETs create new book page. :) */
+/* GETs create new book page :) */
 router.get('/books/new',  (req, res) => {
   res.render('new-book', { book: {}, title: "New Book"});
 });
 
-/* POSTs new book. ****  */
+/* POSTs new book :)  */
 router.post('/books/new', asyncHandler(async (req, res) => {
   let book;
   try {
     book = await Book.create(req.body);
-    //console.log(req.body);
     res.redirect("/books");
   } catch (error) {
     if (error.name === "SequelizeValidationError") {
@@ -46,7 +46,7 @@ router.post('/books/new', asyncHandler(async (req, res) => {
   }
 }));
 
-/* GETs book detail. :) */
+/* GETs book detail :) */
 router.get('/books/:id', asyncHandler(async (req, res) => {
   const book = await Book.findByPk(req.params.id);
   if(book) {
@@ -57,13 +57,12 @@ router.get('/books/:id', asyncHandler(async (req, res) => {
   }
 }));
 
-/* POST updates book info. **** */
+/* POST updates book info :) */
 router.post('/books/:id', asyncHandler(async (req, res) => {
   let book;
   try {
     book = await Book.findByPk(req.params.id);
     if (book) {
-      //console.log(req.body.title);
       await book.update({
         title: req.body.title,
         author: req.body.author,
@@ -85,7 +84,7 @@ router.post('/books/:id', asyncHandler(async (req, res) => {
   }
 }));  
 
-/* POST deletes book. **** */
+/* POST deletes book :) */
 router.post('/books/:id/delete', asyncHandler(async (req, res) => {
   const book = await Book.findByPk(req.params.id);
   if (book) {
